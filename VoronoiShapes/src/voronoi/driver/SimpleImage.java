@@ -1,3 +1,4 @@
+package voronoi.driver;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
@@ -8,7 +9,7 @@ import javax.swing.JLabel;
 public class SimpleImage {
 
 	private int height, width;
-	
+
 	private Pixel[][] pixels;
 	private Color[] colors = new Color[]
 			{Color.BLUE, Color.RED, new Color(255, 204, 204),
@@ -61,18 +62,26 @@ public class SimpleImage {
 			return p.getColor().getRGB();
 		}
 		
-		if(val < colors.length){
-			return colors[val].getRGB();
-		}
-		
-		return colors[val % colors.length].getRGB();
+		return Driver.colorMap.get(val).getRGB();
+//		if(val < colors.length){
+//			return colors[val].getRGB();
+//		}
+//		
+//		return colors[val % colors.length].getRGB();
 	}
+	
+	public static JLabel label;
 	
 	public void showImg(){
 		JFrame frame = new JFrame("Voronoi Image");
 		frame.setSize(width+10, height+10);
-		frame.add(new JLabel(new ImageIcon(toImage())));
+		label = new JLabel(new ImageIcon(toImage()));
+		frame.add(label);
 		frame.setVisible(true);
+	}
+	
+	public void updateImg(){
+		label.setIcon(new ImageIcon(toImage()));
 	}
 	
 	public Pixel getPixel(int x, int y){

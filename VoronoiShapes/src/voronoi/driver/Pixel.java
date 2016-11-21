@@ -1,3 +1,4 @@
+package voronoi.driver;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public class Pixel {
 		}
 		
 		// Edge of shape, set to black
-		if(isShape && results.size() > 1){
+		if(isShape && results.size() > 0){
 			this.setRGB(0, 0, 0);
 		}
 		

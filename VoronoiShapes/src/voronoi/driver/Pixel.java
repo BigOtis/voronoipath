@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import voronoi.map.PixelNode;
+
 public class Pixel {
 
 	private int x, y;
@@ -87,6 +89,11 @@ public class Pixel {
 		// Neighbor is either edge point or shape
 		// Do nothing
 		return null;
+	}
+	
+	public void addToEdgeMap(){
+		PixelNode edge = new PixelNode(x, y);
+		VoronoiMapper.pathMap.put(edge.getKey(), edge);
 	}
 	
 	public Color getColor(){

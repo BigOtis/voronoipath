@@ -1,6 +1,7 @@
 package voronoi.driver;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -11,23 +12,15 @@ public class SimpleImage {
 	private int height, width;
 
 	private Pixel[][] pixels;
-	private Color[] colors = new Color[]
-			{Color.BLUE, Color.RED, new Color(255, 204, 204),
-			 Color.GREEN, Color.YELLOW, Color.CYAN, 
-			 Color.MAGENTA, Color.ORANGE, Color.PINK, 
-			 Color.LIGHT_GRAY, Color.DARK_GRAY, Color.GRAY,
-			 new Color(255, 102, 102), new Color(153, 255, 255),
-			 new Color(255, 102, 255), new Color(51, 255, 51),
-			 new Color(102, 204, 0), new Color(0, 204, 204),
-			 new Color(0, 255, 255), new Color(255, 153, 153),
-			 new Color(76, 153, 0), new Color(153, 76, 0),
-			 new Color(0, 204, 0), new Color(0, 100, 0),
-			 new Color(51, 51, 255), new Color(255, 255, 51),};
 	
-	public SimpleImage(int height, int width){
+	private Map<Integer, Color> colorMap;
+	
+	public SimpleImage(int height, int width, Map<Integer, Color> colorMap){
 		
 		this.setHeight(height);
 		this.setWidth(width);
+		this.colorMap = colorMap;
+		
 		pixels = new Pixel[height][width];
 		
 		for(int i = 0; i < height; i++){
@@ -62,12 +55,7 @@ public class SimpleImage {
 			return p.getColor().getRGB();
 		}
 		
-		return Driver.colorMap.get(val).getRGB();
-//		if(val < colors.length){
-//			return colors[val].getRGB();
-//		}
-//		
-//		return colors[val % colors.length].getRGB();
+		return colorMap.get(val).getRGB();
 	}
 	
 	public static JLabel label;

@@ -1,21 +1,11 @@
 package voronoi.driver;
-import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Driver {
-	
-	public static Map<Integer, Color> colorMap = new HashMap<>();
-	
+		
 	public static void main(String args[]) throws IOException{
 		
 		Scanner scan = new Scanner(System.in);

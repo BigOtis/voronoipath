@@ -1,11 +1,15 @@
 package voronoi.driver;
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import voronoi.map.PixelNode;
 
 public class SimpleImage {
 
@@ -15,11 +19,14 @@ public class SimpleImage {
 	
 	private Map<Integer, Color> colorMap;
 	
-	public SimpleImage(int height, int width, Map<Integer, Color> colorMap){
+	private VoronoiMapper mapper;
+	
+	public SimpleImage(int height, int width, Map<Integer, Color> colorMap, VoronoiMapper mapper){
 		
 		this.setHeight(height);
 		this.setWidth(width);
 		this.colorMap = colorMap;
+		this.mapper = mapper;
 		
 		pixels = new Pixel[height][width];
 		
@@ -64,8 +71,22 @@ public class SimpleImage {
 		JFrame frame = new JFrame("Voronoi Image");
 		frame.setSize(width+10, height+10);
 		label = new JLabel(new ImageIcon(toImage()));
+		
+	    label.addMouseListener(new MouseAdapter(){
+	        public void mousePressed(MouseEvent me){
+	        	System.out.println("Clicked: " + me.getX() + "," + me.getY());
+	        	mapper.handleClick(me.getX(), me.getY());
+	        }
+	    });
+		
+		
 		frame.add(label);
 		frame.setVisible(true);
+	}
+	
+	public void addToEdgeMap(int x, int y){
+		PixelNode edge = new PixelNode(x, y, mapper.pathMap);
+		mapper.pathMap.put(edge.getKey(), edge);
 	}
 	
 	public void updateImg(){

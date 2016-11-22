@@ -12,17 +12,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import voronoi.graphics.VRender;
 import voronoi.map.Node;
+import voronoi.map.PathFinder;
 
 public class VoronoiMapper {
 	
-	public Map<Integer, Color> colorMap = new HashMap<>();
-	public static Map<String, Node> pathMap;
+	public Map<String, Node> pathMap;
+	
+	public Map<Integer, Color> colorMap = new HashMap<>();	
+	public PathFinder pathFinder = new PathFinder();
+	public SimpleImage image;
+
+	public Node node1 = null;
+	public Node node2 = null;
 	
 	public void createVoronoiMap(String directory) throws IOException{
 		
 		pathMap = new HashMap<>();
-		
+				
 		Random random = new Random(10);
 		File folder = new File(directory);
 		File[] files = folder.listFiles();
@@ -34,7 +42,7 @@ public class VoronoiMapper {
 		int width = Integer.parseInt(dimsStr[1]);
 		dimsReader.close();
 		
-		SimpleImage image = new SimpleImage(height, width, colorMap);
+		image = new SimpleImage(height, width, colorMap, this);
 		List<List<Pixel>> shapes = new ArrayList<>();
 		
 		for(int i = 1; i < files.length; i++){
@@ -68,10 +76,10 @@ public class VoronoiMapper {
 			indexes[i] = i;
 		}
 			
-		image.showImg();
 		int numStages = 0;
 		Date tic = new Date();
 		int numPix = 0;
+		//image.showImg();
 		while(!shapesEmpty(shapes)){
 			shuffleArray(indexes);
 			for(int i : indexes){
@@ -83,15 +91,20 @@ public class VoronoiMapper {
 				}
 				shapes.set(i, newShape);
  			}
-			image.updateImg();
+			//image.updateImg();
 			numStages++;
 		}
 		
 		System.out.println("num pix: " + numPix);
 		Date toc = new Date();
-		image.updateImg();
 		System.out.println("It took " + numStages + " steps to create the diagram");
 		System.out.println("It took " + (toc.getTime() - tic.getTime()) + "ms generate it");
+		
+		//image.updateImg();
+		
+		VRender render = new VRender(this);
+		
+		
 	}
 	
 	public boolean shapesEmpty(List<List<Pixel>> shapes){
@@ -116,5 +129,31 @@ public class VoronoiMapper {
 	    	ar[index] = ar[i];
 	    	ar[i] = a;
 	    }
+	}
+	
+	
+	public void handleClick(int x, int y){
+		
+		Node node = pathMap.get(x+","+y);
+		if(node != null){
+			if(node1 == null){
+				node1 = node;
+				System.out.println("Adding edge: " + node1);
+			}
+			else{
+				node2 = node;
+				System.out.println("Adding edge: " + node2);
+				followPath();
+			}
+		}
+	}
+	
+	public void followPath(){
+		System.out.println("Following path: ");
+		Node end = pathFinder.doAST(pathMap, node1.getKey(), node2.getKey());
+		List<Node> path = pathFinder.doTrace(end, "Path");
+		node1 = null;
+		node2 = null;
+		
 	}
 }

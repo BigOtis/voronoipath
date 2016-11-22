@@ -84,16 +84,12 @@ public class Pixel {
 		// Neighbor visited by another shape already: Make it an edge
 		if(!neighbor.isShape && neighbor.val != this.val){
 			neighbor.setEdge(true);
+			image.addToEdgeMap(x, y);
 		}
 		
 		// Neighbor is either edge point or shape
 		// Do nothing
 		return null;
-	}
-	
-	public void addToEdgeMap(){
-		PixelNode edge = new PixelNode(x, y);
-		VoronoiMapper.pathMap.put(edge.getKey(), edge);
 	}
 	
 	public Color getColor(){

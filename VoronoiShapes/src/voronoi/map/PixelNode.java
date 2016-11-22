@@ -2,17 +2,18 @@ package voronoi.map;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import voronoi.driver.VoronoiMapper;
+import java.util.Map;
 
 public class PixelNode extends Node {
 	
 	private int x;
 	private int y;
+	private Map<String, Node> pathMap;
 	
-	public PixelNode(int x, int y){
+	public PixelNode(int x, int y, Map<String, Node> pathMap){
 		this.x = x;
 		this.y = y;
+		this.pathMap = pathMap;
 	}
 	
 	@Override
@@ -32,7 +33,7 @@ public class PixelNode extends Node {
 		for(int i = -1; i <= 1; i++){
 			for(int j = -1; j <= 1; j++){
 				if(i != 0 && j != 0){
-					Node result = VoronoiMapper.pathMap.get(i+","+j);
+					Node result = pathMap.get(i+","+j);
 					if(result != null){
 						neighbors.add(result);
 					}

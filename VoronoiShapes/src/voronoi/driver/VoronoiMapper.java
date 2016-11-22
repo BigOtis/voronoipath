@@ -98,10 +98,7 @@ public class VoronoiMapper {
 		System.out.println("num pix: " + numPix);
 		Date toc = new Date();
 		System.out.println("It took " + numStages + " steps to create the diagram");
-		System.out.println("It took " + (toc.getTime() - tic.getTime()) + "ms generate it");
-		
-		//image.updateImg();
-		
+		System.out.println("It took " + (toc.getTime() - tic.getTime()) + "ms generate it");		
 		VRender render = new VRender(this);
 		
 		

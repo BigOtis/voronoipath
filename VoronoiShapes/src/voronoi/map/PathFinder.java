@@ -32,7 +32,6 @@ public class PathFinder {
 		Node curr;
 		while(!active.isEmpty()){
 			curr = active.poll();
-			System.out.println("Active Size: " + active.size());
 			
 			if(curr.getKey().equals(end)){
 				// Set the starting nodes parent to null
@@ -77,6 +76,7 @@ public class PathFinder {
 		String cities = "";
 		if(result == null){
 			System.err.println("Error! No path found");
+			return null;
 		}
 		
 		Double dist = 0.0;

@@ -70,16 +70,7 @@ public class SimpleImage {
 	public void showImg(){
 		JFrame frame = new JFrame("Voronoi Image");
 		frame.setSize(width+10, height+10);
-		label = new JLabel(new ImageIcon(toImage()));
-		
-	    label.addMouseListener(new MouseAdapter(){
-	        public void mousePressed(MouseEvent me){
-	        	System.out.println("Clicked: " + me.getX() + "," + me.getY());
-	        	mapper.handleClick(me.getX(), me.getY());
-	        }
-	    });
-		
-		
+		label = new JLabel(new ImageIcon(toImage()));	
 		frame.add(label);
 		frame.setVisible(true);
 	}

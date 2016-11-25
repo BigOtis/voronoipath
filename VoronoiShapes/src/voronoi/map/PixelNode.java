@@ -30,8 +30,8 @@ public class PixelNode extends Node {
 	public List<Node> getNeighbors() {
 	
 		ArrayList<Node> neighbors = new ArrayList<>();
-		for(int i = -1; i <= 1; i++){
-			for(int j = -1; j <= 1; j++){
+		for(int i = -2; i <= 2; i++){
+			for(int j = -2; j <= 2; j++){
 				if(i != 0 && j != 0){
 					Node result = pathMap.get((x + i) + "," + (y + j));
 					if(result != null){
@@ -39,6 +39,10 @@ public class PixelNode extends Node {
 					}
 				}
 			}
+		}
+		
+		if(neighbors.size() < 2){
+			System.out.println("less than 2");
 		}
 	
 		return neighbors;

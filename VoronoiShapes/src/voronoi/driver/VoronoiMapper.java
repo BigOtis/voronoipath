@@ -1,6 +1,7 @@
 package voronoi.driver;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -11,6 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 import voronoi.graphics.VRender;
 import voronoi.map.Node;
@@ -129,7 +133,7 @@ public class VoronoiMapper {
 	}
 	
 	
-	public void handleClick(int x, int y){
+	public void handleClick(int x, int y, JLabel imgLabel){
 		
 		Node node = pathMap.get(x+","+y);
 		if(node != null){
@@ -140,17 +144,27 @@ public class VoronoiMapper {
 			else{
 				node2 = node;
 				System.out.println("Adding edge: " + node2);
-				followPath();
+				List<Node> path = followPath();
+				
+				for(Node step : path){
+					BufferedImage curr = image.toImage();
+					for(int i = -5; i <= 5; i++){
+						for(int j = -5; j <= 5; j++){
+							curr.setRGB(step.getX() - i, step.getY() - j, Color.RED.getRGB());
+						}
+					}
+					imgLabel.setIcon(new ImageIcon(curr));
+				}
 			}
 		}
 	}
 	
-	public void followPath(){
+	public List<Node> followPath(){
 		System.out.println("Following path: ");
 		Node end = pathFinder.doAST(pathMap, node1.getKey(), node2.getKey());
 		List<Node> path = pathFinder.doTrace(end, "Path");
 		node1 = null;
 		node2 = null;
-		
+		return path;
 	}
 }

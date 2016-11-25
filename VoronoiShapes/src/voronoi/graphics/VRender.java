@@ -66,7 +66,13 @@ public class VRender{
 	        label.addMouseListener(new MouseAdapter() {
 	            @Override
 	            public void mouseClicked(MouseEvent e) {
-	            	mapper.handleClick(e.getX(), e.getY());
+	            	new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							mapper.handleClick(e.getX(), e.getY(), label);							
+						}
+					}).start();
 	            }
 	        });
 		}

@@ -28,6 +28,11 @@ public abstract class Node {
 			 + Math.abs(this.getY() - that.getY());
 	}
 	
+	public int eucDistTo(Node that){
+		return (int) Math.sqrt(((this.getX() - that.getX()) * (this.getX() - that.getX()))
+				* ((this.getY() - that.getY()) * (this.getY() - that.getY())));
+	}
+	
 	@Override
 	public boolean equals(Object obj){
 		if(obj instanceof Node){

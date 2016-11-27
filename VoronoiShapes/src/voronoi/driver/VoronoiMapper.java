@@ -83,7 +83,7 @@ public class VoronoiMapper {
 		int numStages = 0;
 		Date tic = new Date();
 		int numPix = 0;
-		//image.showImg();
+		image.showImg();
 		while(!shapesEmpty(shapes)){
 			shuffleArray(indexes);
 			for(int i : indexes){
@@ -95,7 +95,7 @@ public class VoronoiMapper {
 				}
 				shapes.set(i, newShape);
  			}
-			//image.updateImg();
+			image.updateImg();
 			numStages++;
 		}
 		

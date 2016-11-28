@@ -47,16 +47,26 @@ public class Pixel {
 	public List<Pixel> grow(){
 		
 		List<Pixel> results = new ArrayList<>();
-		// Examine neighbors of this pixel
-		for(int i = -1; i <= 1; i++){
-			for(int j = -1; j <= 1; j++){
-				if(i != 0 && j != 0){
-					Pixel result = expandTo(x + i, y + j);
-					if(result != null){
-						results.add(result);
-					}
-				}
-			}
+		
+		// Examine neighbors of this pixel		
+		Pixel result = expandTo(x + 1, y);
+		if(result != null){
+			results.add(result);
+		}
+		
+		result = expandTo(x - 1, y);
+		if(result != null){
+			results.add(result);
+		}
+		
+		result = expandTo(x, y + 1);
+		if(result != null){
+			results.add(result);
+		}
+		
+		result = expandTo(x, y - 1);
+		if(result != null){
+			results.add(result);
 		}
 		
 		// Edge of shape, set to black

@@ -65,6 +65,10 @@ public class SimpleImage {
 		return colorMap.get(val).getRGB();
 	}
 	
+	public int getPixelRGB(int x, int y){
+		return getColorRGB(getPixel(x, y));
+	}
+	
 	public static JLabel label;
 	
 	public void showImg(){

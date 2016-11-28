@@ -7,15 +7,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageOutputStream;
 import javax.swing.JLabel;
 
+import voronoi.graphics.GifSequenceWriter;
 import voronoi.graphics.VRender;
 import voronoi.map.Node;
 import voronoi.map.PathFinder;
@@ -27,6 +30,8 @@ public class VoronoiMapper {
 	public Map<Integer, Color> colorMap = new HashMap<>();	
 	public PathFinder pathFinder = new PathFinder();
 	public SimpleImage image;
+	
+	public boolean showTrail = false;
 
 	public Node node1 = null;
 	public Node node2 = null;
@@ -83,9 +88,12 @@ public class VoronoiMapper {
 		int numStages = 0;
 		Date tic = new Date();
 		int numPix = 0;
-		image.showImg();
+
+		ImageOutputStream ios = ImageIO.createImageOutputStream(new File("out.gif"));
+		GifSequenceWriter writer = new GifSequenceWriter(ios, BufferedImage.TYPE_INT_RGB, 25, true);
+		
 		while(!shapesEmpty(shapes)){
-			shuffleArray(indexes);
+
 			for(int i : indexes){
 				List<Pixel> shape = shapes.get(i);
 				List<Pixel> newShape = new ArrayList<>();
@@ -95,9 +103,11 @@ public class VoronoiMapper {
 				}
 				shapes.set(i, newShape);
  			}
-			image.updateImg();
+			writer.writeToSequence(image.toImage());
 			numStages++;
 		}
+		writer.close();
+		ios.close();
 		
 		System.out.println("num pix: " + numPix);
 		Date toc = new Date();
@@ -144,16 +154,57 @@ public class VoronoiMapper {
 			else{
 				node2 = node;
 				System.out.println("Adding edge: " + node2);
-				List<Node> path = followPath();
+				String fileName = node1.getX() + "" + node1.getY() + "" + node2.getX() + "" + node2.getY();
+				ImageOutputStream ios;
+				GifSequenceWriter writer;
+				try {
+					ios = ImageIO.createImageOutputStream(new File(fileName + ".gif"));
+					writer = new GifSequenceWriter(ios, BufferedImage.TYPE_INT_RGB, 0, true);
 				
-				for(Node step : path){
+					List<Node> path = followPath();
+					Collections.reverse(path);
 					BufferedImage curr = image.toImage();
-					for(int i = -5; i <= 5; i++){
-						for(int j = -5; j <= 5; j++){
-							curr.setRGB(step.getX() - i, step.getY() - j, Color.RED.getRGB());
+					Node last = null;
+					
+					for(Node step : path){
+						if(!showTrail && last != null){
+							for(int i = -6; i <= 6; i++){
+								for(int j = -6; j <= 6; j++){
+									int xl = last.getX() - i;
+									int yl = last.getY() - j;
+									if(!(xl < 0 || yl < 0 || xl >= image.getWidth() || yl >= image.getHeight())){
+										curr.setRGB(xl, yl, image.getPixelRGB(xl, yl));
+									}
+								}
+							}
 						}
+						
+						for(int i = -6; i <= 6; i++){
+							for(int j = -6; j <= 6; j++){
+								int xs = step.getX() - i;
+								int ys = step.getY() - j;
+								if(!(xs < 0 || ys < 0 || xs >= image.getWidth() || ys >= image.getHeight())){
+									int color = Color.RED.getRGB();
+									if(i == -6 || i == 6 || j == -6 || j == 6){
+										color = Color.BLACK.getRGB();
+									}
+									if(i == 0 && j == 0){
+										color = Color.GREEN.getRGB();
+									}
+									curr.setRGB(xs, ys, color);
+								}
+							}
+						}
+						writer.writeToSequence(curr);
+						last = step;
 					}
-					imgLabel.setIcon(new ImageIcon(curr));
+					System.out.println("Imaged saved to gif: " + fileName);
+					writer.close();
+					ios.close();
+				}
+				catch(IOException e){
+					e.printStackTrace();
+					return;
 				}
 			}
 		}

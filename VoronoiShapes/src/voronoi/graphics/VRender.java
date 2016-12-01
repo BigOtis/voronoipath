@@ -18,11 +18,22 @@ import javax.swing.UnsupportedLookAndFeelException;
 import voronoi.driver.SimpleImage;
 import voronoi.driver.VoronoiMapper;
 
+/**
+ * Displays the given SimpleImage 
+ * and allows the edges on the image
+ * to be clicked on and searched
+ * @author Phillip Lopez - pgl5711@rit.edu
+ *
+ */
 public class VRender{
 	
 	VoronoiMapper mapper;
 	SimpleImage im;
 	
+	/**
+	 * Instantiates a JFrame and displays it
+	 * @param mapper
+	 */
 	public VRender(VoronoiMapper mapper) {
 		this.mapper = mapper;
 		this.im = mapper.image;
@@ -46,6 +57,9 @@ public class VRender{
     });
     }
 
+	/**
+	 * JPanel wrapper - holds an image icon
+	 */
 	public class VPanel extends JPanel{
 
 		private static final long serialVersionUID = 1L;

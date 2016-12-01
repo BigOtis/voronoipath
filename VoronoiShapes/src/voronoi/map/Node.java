@@ -2,7 +2,11 @@ package voronoi.map;
 
 import java.util.List;
 
-
+/**
+ * Abstract class: Holds a simple node to be used by the PathFinder class
+ * @author pgl57
+ *
+ */
 public abstract class Node {
 
 	public Node parent = null;

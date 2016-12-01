@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Pixel implementation of a Node
+ * @author pgl57
+ *
+ */
 public class PixelNode extends Node {
 	
 	private int x;

@@ -152,7 +152,7 @@ public class VoronoiMapper {
 				shapes.set(i, newShape);
  			}
 			// Write the current stage to the output gif
-			writer.writeToSequence(image.toImage());
+			// writer.writeToSequence(image.toImage());
 			numStages++;
 		}
 		writer.close();
@@ -254,7 +254,7 @@ public class VoronoiMapper {
 							}
 						}
 						// Write the image out to a gif
-						writer.writeToSequence(curr);
+						// writer.writeToSequence(curr);
 						last = step;
 					}
 					System.out.println("Imaged saved to gif: " + fileName);

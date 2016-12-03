@@ -17,7 +17,7 @@ Given an input image:
   
   ii. Continue flooding until all pixels have been reached by the flood.
   
- 4. Display the Voronoi diagram with each region assigned to a random color. Display the shapes these regions surround with their
+4. Display the Voronoi diagram with each region assigned to a random color. Display the shapes these regions surround with their
     original pixel colorings. 
     
     i. The user can now use their mouse to select two edges on the diagram. 

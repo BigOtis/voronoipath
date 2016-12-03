@@ -13,13 +13,15 @@ Given an input image:
 
 3. Using Java, read the input shapes and perform a simultaneous flood fill using the oixel outlines of each shape as a starting point.
 
-  i. When two flood waves from different shapes reach each other, define these pixels as an edge. Store the edges for later use.
+   i. When two flood waves from different shapes reach each other, define these pixels as an edge. Store the edges for later use.
   
-  ii. Continue flooding until all pixels have been reached by the flood.
+   ii. Continue flooding until all pixels have been reached by the flood.
   
 4. Display the Voronoi diagram with each region assigned to a random color. Display the shapes these regions surround with their
     original pixel colorings. 
     
-    i. The user can now use their mouse to select two edges on the diagram. 
-    ii. Once two edges are selected, the shortest path between the two edges will be computed using A*. 
-    iii. A simulated robot will then demonstrate the traversal path in an animation.
+   i. The user can now use their mouse to select two edges on the diagram. 
+   
+   ii. Once two edges are selected, the shortest path between the two edges will be computed using A*. 
+   
+   iii. A simulated robot will then demonstrate the traversal path in an animation.

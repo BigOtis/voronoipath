@@ -18,14 +18,7 @@
 	<link href="../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="jumbotron.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <link href="../css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -48,8 +41,13 @@
 		  <a class="navbar-brand" href="#"><img src="img/icon.png" alt="Voronoi" style="width:30px;height:30px"></a>
 		  <a class="navbar-brand" href="#">2D Generalized Voronoi Path Planning</a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-        </div><!--/.navbar-collapse -->
+		  <div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav navbar-right">
+			  <li class="active"><a href="http://philglopez.com/voronoi">Overview <span class="sr-only">(current)</span></a></li>
+			  <li><a href="https://github.com/briggsotis/voronoipath">GitHub</a></li>
+			  <li><a href="http://philglopez.com/voronoi/references.html">References</a></li>
+			</ul>
+		  </div><!--/.nav-collapse -->
       </div>
     </nav>
 	<hr>
@@ -92,6 +90,9 @@
 				avoiding the objects at any given point. The Java implementation presents the user
 				with an interactive image where two edges can be selected on the Voronoi map and
 				an A* search algorithm is used to find the shortest path between the two points.
+			</p>
+			<p> 
+				Visit my <a href="https://github.com/briggsotis/voronoipath">GitHub repository</a> for a more detailed explanation of the algorithms used.
 			</p>
 			</h4>
 			</div>
@@ -344,7 +345,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-xs-4">
-						<p><img src="img/zebra.JPG" alt="Example" style="width:300px;height:250px;"></p>
+						<p><img src="img/zebra.jpg" alt="Example" style="width:300px;height:250px;"></p>
 					</div>
 					<div class="col-xs-4">
 						<p><img src="img/zebra1.JPG" alt="Example" style="width:300px;height:250px;"></p>					
@@ -371,6 +372,38 @@
 				</div>
 			</div>
 		</div>
+		<!-- Notebook Example -->
+		<div class="well">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-4">
+						<p><img src="img/notebook.jpg" alt="Example" style="width:300px;height:250px;"></p>
+					</div>
+					<div class="col-xs-4">
+						<p><img src="img/notebook1.JPG" alt="Example" style="width:300px;height:250px;"></p>					
+					</div>
+					<div class="col-xs-4">
+						<p><img src="img/notebook2.JPG" alt="Example" style="width:300px;height:250px;"></p>					
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Zerg Rush Example -->
+		<div class="well">
+			<div class="container">
+				<div class="row">
+					<div class="col-xs-4">
+						<p><img src="img/zergrush.png" alt="Example" style="width:300px;height:250px;"></p>
+					</div>
+					<div class="col-xs-4">
+						<p><img src="img/zergrush1.jpg" alt="Example" style="width:300px;height:250px;"></p>					
+					</div>
+					<div class="col-xs-4">
+						<p><img src="img/zergrush2.jpg" alt="Example" style="width:300px;height:250px;"></p>					
+					</div>
+				</div>
+			</div>
+		</div>
 		<hr>
 		<footer>
 			<p>&copy; Phillip Lopez, 2016 </p>
@@ -383,8 +416,8 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="../js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>

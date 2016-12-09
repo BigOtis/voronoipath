@@ -34,15 +34,15 @@ object at a shapes location, the MATLAB script contained in this project outputs
 The flood fill algorithm is located in the VoronoiMapper.java class and is the main driver for the flood fill algorithm. Below is a pseudocode explaination of that code.
 
 Given a queue of pixels for each shape, "shapes" (initially the pixels that make up shape itself)
-code(
+'''
 while the shapes still have pixels in their list:
-&nbsp;&nbsp;&nbsp;&nbsp;for each shape
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new empty queue of pixels for the shape
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for each pixel in shape's list
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flood this pixel to it's neighbors 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;add any neighbors that were previously unvisited to the new queue for this shape
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;now replace the old queue for this shape with the new queue
-         
+   for each shape
+      create a new empty queue of pixels for the shape
+      for each pixel in shape's list
+         flood this pixel to it's neighbors 
+         add any neighbors that were previously unvisited to the new queue for this shape
+   now replace the old queue for this shape with the new queue
+'''       
 The "flood pixel" step above takes place in the Pixel.java "grow" method. Because we are using the Manhattan distance metric here, the Pixel vists it's left, right, top and bottom neighbors. 
 
 If any neighbor is already a pixel that belongs to the same shape as the visiting pixel, nothing happens.

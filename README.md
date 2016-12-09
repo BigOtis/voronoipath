@@ -45,8 +45,8 @@ Given a queue of pixels for each shape, "shapes" (initially the pixels that make
       
 The "flood pixel" step above takes place in the Pixel.java "grow" method. Because we are using the Manhattan distance metric here, the Pixel vists it's left, right, top and bottom neighbors. 
 
-If any neighbor is already a pixel that belongs to the same shape as the visiting pixel, nothing happens.
-If the neighbor belongs to a different shape, then we mark is as an edge. This means it is in the middle of two shapes.
-If the neighbor is an unvisited pixel, then is claimed by the visitor and belongs to that shapes region of control. It is added back to the shapes queue for the next flood stage. 
+* If any neighbor is already a pixel that belongs to the same shape as the visiting pixel, nothing happens.
+* If the neighbor belongs to a different shape, then we mark is as an edge. This means it is in the middle of two shapes.
+* If the neighbor is an unvisited pixel, then is claimed by the visitor and belongs to that shapes region of control. It is added back to the shapes queue for the next flood stage. 
 
 This algorithm performs the "flood this pixel" stage one time for every pixel. Because of this, we can quickly generate the Generalized Voronoi Diagram for an image having only to visit each pixel once and then examine it's neighbors one time. 

@@ -1,6 +1,8 @@
 ## Generalized Voronoi Diagrams for Path Planning
 
-A simple discrete approach to creating generalized 2D Voronoi diagrams for object avoidance and path planning. 
+A simple discrete approach to creating generalized 2D Voronoi diagrams for object avoidance and path planning. To see some example output visit http://philglopez.com/voronoi
+
+![picture alt](http://philglopez.com/voronoi/img/blocks.JPG "A simple block example converted to Voronoi")
 
 ## Algorithm Pipeline/Overview
 
@@ -25,3 +27,28 @@ Given an input image:
    ii. Once two edges are selected, the shortest path between the two edges will be computed using A*. 
    
    iii. A simulated robot will then demonstrate the traversal path in an animation.
+
+## Flood Fill Algorithm
+
+The flood fill algorithm runs given input shapes and the pixels that belong to the shapes. For the purpose of redrawing the original
+object at a shapes location, the MATLAB script contained in this project outputs each shapes pixel coordinates along with the RGB value associated with them.
+
+The flood fill algorithm is located in the VoronoiMapper.java class and is the main driver for the flood fill algorithm. Below is a pseudocode explaination of that code.
+
+Given a queue of pixels for each shape, "shapes" (initially the pixels that make up shape itself)
+
+* while the shapes still have pixels in their list:
+   * for each shape
+      * create a new empty queue of pixels for the shape
+      * for each pixel in shape's list
+         * flood this pixel to it's neighbors 
+         * add any neighbors that were previously unvisited to the new queue for this shape
+      * now replace the old queue for this shape with the new queue     
+      
+The "flood pixel" step above takes place in the Pixel.java "grow" method. Because we are using the Manhattan distance metric here, the Pixel vists it's left, right, top and bottom neighbors. 
+
+* If any neighbor is already a pixel that belongs to the same shape as the visiting pixel, nothing happens.
+* If the neighbor belongs to a different shape, then we mark is as an edge. This means it is in the middle of two shapes.
+* If the neighbor is an unvisited pixel, then is claimed by the visitor and belongs to that shapes region of control. It is added back to the shapes queue for the next flood stage. 
+
+This algorithm performs the "flood this pixel" stage one time for every pixel. Because of this, we can quickly generate the Generalized Voronoi Diagram for an image having only to visit each pixel once and then examine it's neighbors one time. 

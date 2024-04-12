@@ -1,8 +1,6 @@
 ## Generalized Voronoi Diagrams for Path Planning
 
-A simple discrete approach to creating generalized 2D Voronoi diagrams for object avoidance and path planning. To see some example output visit http://philglopez.com/voronoi
-
-![picture alt](http://philglopez.com/voronoi/img/blocks.JPG "A simple block example converted to Voronoi")
+A simple discrete approach to creating generalized 2D Voronoi diagrams for object avoidance and path planning.
 
 ## Algorithm Pipeline/Overview
 

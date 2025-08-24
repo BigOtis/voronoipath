@@ -158,7 +158,8 @@ class VoronoiNavigator:
 
         def update(i):
             self.path_line.set_data(xs[: i + 1], ys[: i + 1])
-            self.path_dot.set_data(xs[i], ys[i])
+            # set_data expects sequences; wrap coordinates in lists for single point
+            self.path_dot.set_data([xs[i]], [ys[i]])
             return self.path_line, self.path_dot
 
         self.animation = FuncAnimation(

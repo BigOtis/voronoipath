@@ -19,7 +19,7 @@ python voronoi_path.py VoronoiShapes/blocks.JPG --no-display
 
 The script logs progress through loading, object detection, skeletonization, and graph construction stages.
 
-After a path is computed a **Play** button and **Speed** slider let you replay the flood‑fill animation showing the path being created at different speeds.
+After a path is computed a **Play** button and **Speed** slider let you replay the flood‑fill animation showing the path being created at different speeds. Starting a new selection clears previous markers and paths so that only the latest start and goal points remain on screen.
 
 ## Algorithm Overview
 

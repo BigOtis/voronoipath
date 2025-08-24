@@ -113,6 +113,7 @@ class VoronoiNavigator:
         self.path_line = None
         self.path_dot = None
         self.animation = None
+        self.point_markers = []
         self.fig.canvas.mpl_connect("button_press_event", self.on_click)
 
         # Controls
@@ -125,9 +126,16 @@ class VoronoiNavigator:
     def on_click(self, event):
         if event.inaxes != self.ax:
             return
+        # Starting a new selection clears previous markers and animations
+        if not self.clicks:
+            self.clear_path()
+            for m in self.point_markers:
+                m.remove()
+            self.point_markers.clear()
         x, y = int(event.xdata), int(event.ydata)
         node = self.nearest_node((y, x))
-        self.ax.plot(node[1], node[0], "ro" if not self.clicks else "go")
+        marker, = self.ax.plot(node[1], node[0], "ro" if not self.point_markers else "go")
+        self.point_markers.append(marker)
         self.clicks.append(node)
         self.fig.canvas.draw()
         if len(self.clicks) == 2:
@@ -146,15 +154,10 @@ class VoronoiNavigator:
             return
         xs = [p[1] for p in self.path]
         ys = [p[0] for p in self.path]
-        if self.path_line:
-            self.path_line.remove()
-        if self.path_dot:
-            self.path_dot.remove()
+        self.clear_path()
         self.path_line, = self.ax.plot([], [], color="cyan", linewidth=2)
         self.path_dot, = self.ax.plot([], [], "mo", markersize=5)
         interval = self.speed_slider.val
-        if self.animation:
-            self.animation.event_source.stop()
 
         def update(i):
             self.path_line.set_data(xs[: i + 1], ys[: i + 1])
@@ -171,6 +174,17 @@ class VoronoiNavigator:
             repeat=False,
         )
         self.fig.canvas.draw()
+
+    def clear_path(self):
+        if self.animation:
+            self.animation.event_source.stop()
+            self.animation = None
+        if self.path_line:
+            self.path_line.remove()
+            self.path_line = None
+        if self.path_dot:
+            self.path_dot.remove()
+            self.path_dot = None
 
     def nearest_node(self, point):
         coords = np.array(list(self.graph.nodes))

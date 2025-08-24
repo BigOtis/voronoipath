@@ -6,6 +6,7 @@ from skimage.morphology import medial_axis
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from matplotlib.widgets import Button, Slider
 
 
 def load_and_segment(path: str):
@@ -106,40 +107,69 @@ class VoronoiNavigator:
         self.fig, self.ax = plt.subplots()
         self.ax.imshow(visual)
         self.ax.imshow(skeleton, cmap="gray", alpha=0.6)
+        plt.subplots_adjust(bottom=0.15)
         self.clicks = []
+        self.path = []
         self.path_line = None
+        self.path_dot = None
+        self.animation = None
         self.fig.canvas.mpl_connect("button_press_event", self.on_click)
+
+        # Controls
+        axplay = self.fig.add_axes([0.82, 0.02, 0.1, 0.05])
+        self.play_btn = Button(axplay, "Play")
+        self.play_btn.on_clicked(self.play_path)
+        axspeed = self.fig.add_axes([0.25, 0.04, 0.5, 0.03])
+        self.speed_slider = Slider(axspeed, "Speed", 10, 200, valinit=30, valstep=1)
 
     def on_click(self, event):
         if event.inaxes != self.ax:
             return
         x, y = int(event.xdata), int(event.ydata)
-        if not self.skeleton[y, x]:
-            logging.info("Click (%d, %d) not on skeleton", x, y)
-            return
-        self.ax.plot(x, y, "ro" if not self.clicks else "go")
-        self.clicks.append((y, x))  # store as (row, col)
+        node = self.nearest_node((y, x))
+        self.ax.plot(node[1], node[0], "ro" if not self.clicks else "go")
+        self.clicks.append(node)
         self.fig.canvas.draw()
         if len(self.clicks) == 2:
-            self.draw_path()
+            self.compute_path()
 
-    def draw_path(self):
-        start = self.nearest_node(self.clicks[0])
-        goal = self.nearest_node(self.clicks[1])
+    def compute_path(self):
+        start, goal = self.clicks
         logging.info("Computing path from %s to %s", start, goal)
-        path = nx.shortest_path(self.graph, start, goal, weight="weight")
-        logging.info("Path has %d nodes", len(path))
-        xs = [p[1] for p in path]
-        ys = [p[0] for p in path]
-        self.path_line, = self.ax.plot([], [], "r-", linewidth=2)
+        self.path = nx.shortest_path(self.graph, start, goal, weight="weight")
+        logging.info("Path has %d nodes", len(self.path))
+        self.clicks.clear()
+        self.play_path()
+
+    def play_path(self, event=None):
+        if not self.path:
+            return
+        xs = [p[1] for p in self.path]
+        ys = [p[0] for p in self.path]
+        if self.path_line:
+            self.path_line.remove()
+        if self.path_dot:
+            self.path_dot.remove()
+        self.path_line, = self.ax.plot([], [], color="cyan", linewidth=2)
+        self.path_dot, = self.ax.plot([], [], "mo", markersize=5)
+        interval = self.speed_slider.val
+        if self.animation:
+            self.animation.event_source.stop()
 
         def update(i):
             self.path_line.set_data(xs[: i + 1], ys[: i + 1])
-            return (self.path_line,)
+            self.path_dot.set_data(xs[i], ys[i])
+            return self.path_line, self.path_dot
 
-        FuncAnimation(self.fig, update, frames=len(path), interval=30, blit=True, repeat=False)
+        self.animation = FuncAnimation(
+            self.fig,
+            update,
+            frames=len(xs),
+            interval=interval,
+            blit=True,
+            repeat=False,
+        )
         self.fig.canvas.draw()
-        self.clicks.clear()
 
     def nearest_node(self, point):
         coords = np.array(list(self.graph.nodes))

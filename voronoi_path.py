@@ -2,7 +2,6 @@ import argparse
 import logging
 import cv2
 import numpy as np
-from rembg import remove
 from skimage.morphology import medial_axis
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -10,7 +9,7 @@ from matplotlib.animation import FuncAnimation
 
 
 def load_and_segment(path: str):
-    """Load an image and isolate foreground objects with background removal.
+    """Load an image and segment foreground obstacles using HSV thresholding.
 
     Parameters
     ----------
@@ -22,29 +21,41 @@ def load_and_segment(path: str):
     orig : np.ndarray
         Original BGR image.
     binary : np.ndarray
-        Binary image where foreground objects are 1 and free space is 0.
+        Binary mask where obstacles are 1 and free space is 0.
+    vis : np.ndarray
+        RGB image visualizing flood-filled objects.
+    num_objects : int
+        Number of detected objects.
     """
     logging.info("Loading image %s", path)
     orig = cv2.imread(path)
     if orig is None:
         raise FileNotFoundError(path)
 
-    # rembg expects RGB input and returns an array with alpha channel
-    rgb = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB)
-    logging.info("Removing background")
-    rgba = remove(rgb)
-
-    # Extract alpha channel as object mask
-    if rgba.shape[2] == 4:
-        alpha = rgba[:, :, 3]
-    else:
-        alpha = cv2.cvtColor(rgba, cv2.COLOR_RGB2GRAY)
-
-    mask = (alpha > 0).astype(np.uint8)
+    hsv = cv2.cvtColor(orig, cv2.COLOR_BGR2HSV)
+    # Background assumed to be near-white: low saturation and high value
+    background = cv2.inRange(hsv, (0, 0, 200), (180, 30, 255))
+    foreground = cv2.bitwise_not(background)
     kernel = np.ones((3, 3), np.uint8)
-    binary = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
-    logging.info("Foreground mask created with %d pixels", int(np.sum(binary)))
-    return orig, binary
+    foreground = cv2.morphologyEx(foreground, cv2.MORPH_OPEN, kernel, iterations=1)
+
+    num_labels, labels = cv2.connectedComponents(foreground)
+    num_objects = num_labels - 1
+    logging.info("Detected %d objects", num_objects)
+
+    rng = np.random.default_rng(0)
+    colors = rng.integers(0, 255, size=(num_labels, 3), dtype=np.uint8)
+    color_map = colors[labels]
+    rgb = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB)
+    vis = cv2.addWeighted(rgb, 0.3, color_map, 0.7, 0)
+    for i in range(1, num_labels):
+        ys, xs = np.where(labels == i)
+        x0, x1 = xs.min(), xs.max()
+        y0, y1 = ys.min(), ys.max()
+        cv2.rectangle(vis, (x0, y0), (x1, y1), (255, 255, 255), 1)
+
+    binary = (foreground > 0).astype(np.uint8)
+    return orig, binary, vis, num_objects
 
 
 def compute_voronoi(binary: np.ndarray):
@@ -88,12 +99,12 @@ def build_graph(skeleton: np.ndarray) -> nx.Graph:
 class VoronoiNavigator:
     """Interactive viewer allowing users to click two points and see shortest path."""
 
-    def __init__(self, image, skeleton, graph):
-        self.image = image
+    def __init__(self, visual, skeleton, graph):
+        self.image = visual
         self.skeleton = skeleton
         self.graph = graph
         self.fig, self.ax = plt.subplots()
-        self.ax.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        self.ax.imshow(visual)
         self.ax.imshow(skeleton, cmap="gray", alpha=0.6)
         self.clicks = []
         self.path_line = None
@@ -103,6 +114,9 @@ class VoronoiNavigator:
         if event.inaxes != self.ax:
             return
         x, y = int(event.xdata), int(event.ydata)
+        if not self.skeleton[y, x]:
+            logging.info("Click (%d, %d) not on skeleton", x, y)
+            return
         self.ax.plot(x, y, "ro" if not self.clicks else "go")
         self.clicks.append((y, x))  # store as (row, col)
         self.fig.canvas.draw()
@@ -138,17 +152,19 @@ class VoronoiNavigator:
 
 def main(image_path: str, no_display: bool = False):
     logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(message)s")
-    image, binary = load_and_segment(image_path)
+    _orig, binary, vis, num_objects = load_and_segment(image_path)
     skeleton, _ = compute_voronoi(binary)
     graph = build_graph(skeleton)
     if no_display:
         logging.info(
-            "nodes: %d edges: %d",
+            "objects: %d nodes: %d edges: %d",
+            num_objects,
             graph.number_of_nodes(),
             graph.number_of_edges(),
         )
         return
-    viewer = VoronoiNavigator(image, skeleton, graph)
+    viewer = VoronoiNavigator(vis, skeleton, graph)
+    viewer.ax.set_title(f"{num_objects} objects detected")
     viewer.show()
 
 

@@ -3,5 +3,3 @@ numpy
 scikit-image
 networkx
 matplotlib
-rembg
-onnxruntime

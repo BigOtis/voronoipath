@@ -17,6 +17,8 @@ To run in a headless environment, omit the interactive window:
 python voronoi_path.py VoronoiShapes/blocks.JPG --no-display
 ```
 
+The script logs progress through loading, skeletonization, and graph construction stages.
+
 ## Algorithm Overview
 
 1. Load the image and run `rembg` to remove the background and obtain a foreground mask.

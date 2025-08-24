@@ -1,4 +1,5 @@
 import argparse
+import logging
 import cv2
 import numpy as np
 from rembg import remove
@@ -23,12 +24,14 @@ def load_and_segment(path: str):
     binary : np.ndarray
         Binary image where foreground objects are 1 and free space is 0.
     """
+    logging.info("Loading image %s", path)
     orig = cv2.imread(path)
     if orig is None:
         raise FileNotFoundError(path)
 
     # rembg expects RGB input and returns an array with alpha channel
     rgb = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB)
+    logging.info("Removing background")
     rgba = remove(rgb)
 
     # Extract alpha channel as object mask
@@ -40,21 +43,26 @@ def load_and_segment(path: str):
     mask = (alpha > 0).astype(np.uint8)
     kernel = np.ones((3, 3), np.uint8)
     binary = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    logging.info("Foreground mask created with %d pixels", int(np.sum(binary)))
     return orig, binary
 
 
 def compute_voronoi(binary: np.ndarray):
     """Compute Voronoi skeleton of free space using medial axis."""
+    logging.info("Computing Voronoi skeleton")
     free_space = binary == 0
     skeleton, dist = medial_axis(free_space, return_distance=True)
+    logging.info("Skeleton extracted with %d pixels", int(np.sum(skeleton)))
     return skeleton, dist
 
 
 def build_graph(skeleton: np.ndarray) -> nx.Graph:
     """Build an adjacency graph from skeleton pixels."""
+    logging.info("Building graph from skeleton")
     g = nx.Graph()
     coords = np.column_stack(np.nonzero(skeleton))  # (y, x)
-    for y, x in coords:
+    total = len(coords)
+    for idx, (y, x) in enumerate(coords):
         g.add_node((y, x))
         for dy in (-1, 0, 1):
             for dx in (-1, 0, 1):
@@ -67,6 +75,13 @@ def build_graph(skeleton: np.ndarray) -> nx.Graph:
                     and skeleton[ny, nx_]
                 ):
                     g.add_edge((y, x), (ny, nx_), weight=float(np.hypot(dy, dx)))
+        if (idx + 1) % 1000 == 0 or idx + 1 == total:
+            logging.info("Processed %d/%d skeleton pixels", idx + 1, total)
+    logging.info(
+        "Graph built with %d nodes and %d edges",
+        g.number_of_nodes(),
+        g.number_of_edges(),
+    )
     return g
 
 
@@ -97,7 +112,9 @@ class VoronoiNavigator:
     def draw_path(self):
         start = self.nearest_node(self.clicks[0])
         goal = self.nearest_node(self.clicks[1])
+        logging.info("Computing path from %s to %s", start, goal)
         path = nx.shortest_path(self.graph, start, goal, weight="weight")
+        logging.info("Path has %d nodes", len(path))
         xs = [p[1] for p in path]
         ys = [p[0] for p in path]
         self.path_line, = self.ax.plot([], [], "r-", linewidth=2)
@@ -120,11 +137,16 @@ class VoronoiNavigator:
 
 
 def main(image_path: str, no_display: bool = False):
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(message)s")
     image, binary = load_and_segment(image_path)
     skeleton, _ = compute_voronoi(binary)
     graph = build_graph(skeleton)
     if no_display:
-        print(f"nodes: {graph.number_of_nodes()} edges: {graph.number_of_edges()}")
+        logging.info(
+            "nodes: %d edges: %d",
+            graph.number_of_nodes(),
+            graph.number_of_edges(),
+        )
         return
     viewer = VoronoiNavigator(image, skeleton, graph)
     viewer.show()
